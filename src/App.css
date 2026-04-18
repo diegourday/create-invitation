@@ -1988,7 +1988,7 @@ body {
 }
 
 .select-wrapper::after {
-  content: '▼';
+  content: "▼";
   font-size: 0.8rem;
   position: absolute;
   right: 12px;
@@ -2012,7 +2012,9 @@ body {
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .form-select:hover {
@@ -2040,7 +2042,7 @@ body {
 }
 
 .select-wrapper::after {
-  content: '▼';
+  content: "▼";
   font-size: 0.8rem;
   position: absolute;
   right: 12px;
@@ -2064,7 +2066,9 @@ body {
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .form-select:hover {
@@ -2083,4 +2087,340 @@ body {
 
 .form-select option:disabled {
   color: #a0a0a0;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ebebeb;
+  margin-top: 32px;
+}
+
+/* ======== SMARTPHONE / MOBILE OPTIMIZATION ======== */
+@media (max-width: 600px) {
+  /* Omitir links del navbar y centrar logo */
+  .navbar-container {
+    justify-content: center;
+  }
+  .navbar-links {
+    display: none !important;
+  }
+
+  /* Padding general más amigable para mobile */
+  .layout {
+    padding: 20px 10px;
+  }
+
+  /* Modal de Crear Evento responsivo */
+  .modal-content {
+    width: 95%;
+    max-width: 100%;
+    margin: 16px auto;
+    padding: 20px 16px;
+    border-radius: 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-header h2 {
+    font-size: 1.2rem;
+  }
+
+  /* Ajuste de formularios (Itinerario, Más Información) */
+  .itinerary-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-section {
+    padding: 20px 16px;
+  }
+
+  .itinerary-card {
+    padding: 20px 16px;
+  }
+
+  /* Pestañas Swipeables en lugar de amontonarse */
+  .tab-btn {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    background-color: var(--white);
+    border: 1px solid #ebebeb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  .tab-btn.active {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Detalle de Evento Hero Banner */
+  .event-hero-banner {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+
+  .hero-title {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  .hero-link-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .hero-link {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+
+  .link-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hero-date {
+    margin-top: 10px;
+  }
+
+  /* Ajuste a botones de Acción */
+  .event-card-bottom {
+    padding: 16px;
+  }
+
+  .event-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .event-title {
+    font-size: 1.1rem;
+  }
+
+  /* Tabla de itinerario y actividades con scroll suave */
+  .itinerary-table-container,
+  .modern-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--border-color, #ebebeb);
+    border-radius: 8px;
+  }
+
+  .itinerary-modern-table {
+    min-width: 480px;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+  }
+
+  .section-subtitle {
+    font-size: 1.1rem;
+    margin-top: 24px;
+    margin-bottom: 16px;
+  }
+
+  /* Botones primarios ocupan el ancho total */
+  .btn-primary,
+  .primary-action-btn,
+  .itinerary-add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Tarjetas y Contenedores */
+  .event-card,
+  .photos-main-card,
+  .timeline-card {
+    border-radius: 12px;
+  }
+
+  .photos-gallery-card {
+    padding: 16px;
+  }
+}
+
+/* AJUSTES RESPONSIVOS EXTRA VISTA EVENTO */
+@media (max-width: 600px) {
+  .checklist-container {
+    padding: 20px 16px;
+  }
+
+  .link-content {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+  .link-content a {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    max-width: 200px;
+    font-size: 0.9rem;
+  }
+
+  .step-item {
+    flex-direction: column;
+    gap: 0;
+    padding: 20px;
+    align-items: flex-start;
+  }
+
+  .step-image {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 56px;
+    height: 56px;
+    margin: 0 0 16px 0;
+    align-self: flex-start;
+  }
+
+  .step-content {
+    margin-top: 0;
+    margin-right: 0;
+    width: 100%;
+  }
+
+  .step-action {
+    width: 100%;
+    margin-top: 12px;
+    margin-left: 0;
+  }
+
+  .step-action .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-link a {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .event-details-view {
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Arreglo desbordamiento Editor Headers */
+  .editor-header {
+    padding: 16px;
+    align-items: stretch;
+  }
+
+  .editor-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .editor-header-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .editor-header-actions button {
+    flex: 1 1 calc(50% - 8px);
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    min-width: 120px;
+  }
+
+  /* Padding masivo en el contenido que apretaba inputs */
+  .editor-content {
+    padding: 20px 16px;
+    min-height: auto;
+  }
+
+  /* Evitar zoom automático en iOS para inputs y buen tap target */
+  .modern-input,
+  .form-select,
+  .modern-textarea {
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .editor-body {
+    gap: 16px;
+  }
+}
+
+/* FIX FINAL PARA DESBORDAMIENTO HORIZONTAL EN MOBILE */
+@media (max-width: 600px) {
+  .layout, .main-content, .editor-layout, .editor-body {
+    max-width: 100vw;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+  
+  .editor-sidebar, .editor-header, .editor-content {
+    max-width: 100%;
+    min-width: 0;
+  }
+  
+  /* Asegurar que las pestañas scrollen pero no empujen el body */
+  .tab-list {
+    max-width: 100%;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+  }
+  .tab-list::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+  
+  /* Prevenir que botones de acción grandes rompan el layout */
+  .editor-header-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .editor-header-actions button {
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+  }
+  
+  .modern-form, .itinerary-grid, .photos-grid {
+    max-width: 100%;
+    min-width: 0;
+  }
+  
+  .form-group {
+    max-width: 100%;
+    min-width: 0;
+  }
+  
+  .modern-input, .modern-textarea, .form-select {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    overflow-x: hidden;
+  }
+  #root {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  .layout {
+    width: 100%;
+    max-width: 100%;
+  }
 }

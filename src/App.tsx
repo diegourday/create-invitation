@@ -25,6 +25,7 @@ import {
   Circle,
   Link,
   CalendarPlus,
+  Calendar,
   Users,
   Send,
   Gift,
@@ -418,12 +419,14 @@ function ItinerarySectionEditor() {
   };
 
   return (
-    <div className="itinerary-section fade-in">
-      <div className="itinerary-card">
+    <div className="form-section fade-in">
+      <h2 className="section-title">Itinerario</h2>
+
+      <div className="modern-form">
         <div className="form-group">
           <label>
             Título de la sección de itinerario
-            <span className="required-asterisk">*</span>
+            <span className="required">*</span>
           </label>
           <input
             type="text"
@@ -433,10 +436,10 @@ function ItinerarySectionEditor() {
           />
         </div>
 
-        <div className="itinerary-form-area">
-          <p className="itinerary-subtitle">
+        <div className="itinerary-add-box">
+          <h3 className="section-subtitle">
             Agrega las actividades del evento
-          </p>
+          </h3>
 
           <div className="form-group">
             <label>Nombre de actividad</label>
@@ -708,18 +711,32 @@ interface ExtraInfoCard {
 function ExtraInformationSectionEditor() {
   const [sectionTitle, setSectionTitle] = useState("Más información");
   const [cards, setCards] = useState<ExtraInfoCard[]>([
-    { id: 1, title: 'Mesa de regalos', icon: 'gift', description: 'Liverpool: 12345' },
-    { id: 2, title: 'Hospedaje', icon: 'hotel', description: 'Hotel Fiesta Inn' }
+    {
+      id: 1,
+      title: "Mesa de regalos",
+      icon: "gift",
+      description: "Liverpool: 12345",
+    },
+    {
+      id: 2,
+      title: "Hospedaje",
+      icon: "hotel",
+      description: "Hotel Fiesta Inn",
+    },
   ]);
-  
+
   const [newTitle, setNewTitle] = useState("");
   const [newIcon, setNewIcon] = useState("gift");
   const [newDesc, setNewDesc] = useState("");
 
   const handleAdd = () => {
     if (!newTitle.trim()) return;
-    const newId = cards.length > 0 ? Math.max(...cards.map(c => c.id)) + 1 : 1;
-    setCards([...cards, { id: newId, title: newTitle, icon: newIcon, description: newDesc }]);
+    const newId =
+      cards.length > 0 ? Math.max(...cards.map((c) => c.id)) + 1 : 1;
+    setCards([
+      ...cards,
+      { id: newId, title: newTitle, icon: newIcon, description: newDesc },
+    ]);
     setNewTitle("");
     setNewIcon("gift");
     setNewDesc("");
@@ -728,26 +745,32 @@ function ExtraInformationSectionEditor() {
   const handleRemove = (id: number) => {
     setCards(cards.filter((c) => c.id !== id));
   };
-  
-  const moveCard = (id: number, direction: 'up' | 'down') => {
-    const index = cards.findIndex(c => c.id === id);
+
+  const moveCard = (id: number, direction: "up" | "down") => {
+    const index = cards.findIndex((c) => c.id === id);
     if (index < 0) return;
-    if (direction === 'up' && index === 0) return;
-    if (direction === 'down' && index === cards.length - 1) return;
-    
+    if (direction === "up" && index === 0) return;
+    if (direction === "down" && index === cards.length - 1) return;
+
     const newCards = [...cards];
-    const swapIndex = direction === 'up' ? index - 1 : index + 1;
-    [newCards[index], newCards[swapIndex]] = [newCards[swapIndex], newCards[index]];
+    const swapIndex = direction === "up" ? index - 1 : index + 1;
+    [newCards[index], newCards[swapIndex]] = [
+      newCards[swapIndex],
+      newCards[index],
+    ];
     setCards(newCards);
   };
 
   return (
-    <div className="extra-section fade-in">
+    <div className="form-section fade-in">
       <h2 className="section-title">Más información</h2>
-      
+
       <div className="modern-form">
         <div className="form-group">
-          <label>Título de la sección de información <span className="required">*</span></label>
+          <label>
+            Título de la sección de información{" "}
+            <span className="required">*</span>
+          </label>
           <input
             type="text"
             className="modern-input"
@@ -759,7 +782,7 @@ function ExtraInformationSectionEditor() {
       </div>
 
       <div className="itinerary-add-box">
-        <h3>Agregar tarjeta de información</h3>
+        <h3 className="section-subtitle">Agregar tarjeta de información</h3>
         <div className="itinerary-grid">
           <div className="form-group">
             <label>Título de tarjeta</label>
@@ -771,7 +794,7 @@ function ExtraInformationSectionEditor() {
               placeholder="Ej. Mesa de regalos"
             />
           </div>
-          
+
           <div className="form-group">
             <label>Icono</label>
             <div className="select-wrapper">
@@ -791,7 +814,7 @@ function ExtraInformationSectionEditor() {
           </div>
         </div>
 
-        <div className="form-group" style={{ marginTop: '16px' }}>
+        <div className="form-group" style={{ marginTop: "16px" }}>
           <label>Descripción</label>
           <textarea
             className="modern-input"
@@ -799,7 +822,7 @@ function ExtraInformationSectionEditor() {
             onChange={(e) => setNewDesc(e.target.value)}
             placeholder="Detalles sobre esta sección..."
             rows={3}
-            style={{ resize: 'vertical' }}
+            style={{ resize: "vertical" }}
           />
         </div>
 
@@ -812,7 +835,7 @@ function ExtraInformationSectionEditor() {
             Agregar
           </button>
         </div>
-        
+
         <div className="itinerary-table-container">
           <table className="itinerary-modern-table">
             <thead>
@@ -843,9 +866,29 @@ function ExtraInformationSectionEditor() {
                       {card.icon === "info" && "ℹ️"}
                     </td>
                     <td className="action-cell">
-                      <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
-                         <button type="button" className="icon-btn" onClick={() => moveCard(card.id, 'up')} disabled={idx === 0}>⬆️</button>
-                         <button type="button" className="icon-btn" onClick={() => moveCard(card.id, 'down')} disabled={idx === cards.length - 1}>⬇️</button>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "4px",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <button
+                          type="button"
+                          className="icon-btn"
+                          onClick={() => moveCard(card.id, "up")}
+                          disabled={idx === 0}
+                        >
+                          ⬆️
+                        </button>
+                        <button
+                          type="button"
+                          className="icon-btn"
+                          onClick={() => moveCard(card.id, "down")}
+                          disabled={idx === cards.length - 1}
+                        >
+                          ⬇️
+                        </button>
                       </div>
                     </td>
                     <td className="action-cell">
@@ -898,10 +941,10 @@ function EventEditor() {
       <div className="editor-header">
         <h1>{event.title}</h1>
         <div className="editor-header-actions">
-          <button className="btn-outline">
+          <button className="btn-outline" style={{ whiteSpace: "nowrap" }}>
             <Eye size={18} /> Ver invitación
           </button>
-          <button className="btn-filled">
+          <button className="btn-filled" style={{ whiteSpace: "nowrap" }}>
             <Save size={18} /> Guardar
           </button>
         </div>
@@ -1215,67 +1258,136 @@ function MainApp() {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <div className="modal-header">
-              <h2>Crear mi evento</h2>
+            <div className="modal-header" style={{ alignItems: "flex-start" }}>
+              <div>
+                <h2 style={{ fontSize: "1.4rem" }}>Crear evento</h2>
+                <p
+                  style={{
+                    margin: "6px 0 0 0",
+                    fontSize: "0.9rem",
+                    color: "var(--text-gray)",
+                  }}
+                >
+                  Invitación web, lista de regalos y confirmación de asistencia
+                </p>
+              </div>
               <button
-                className="close-btn"
+                className="btn-outline"
+                style={{
+                  padding: "6px 12px",
+                  fontSize: "0.85rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  border: "1px solid #ebebeb",
+                }}
                 onClick={() => setIsModalOpen(false)}
                 aria-label="Cerrar modal"
               >
-                <X size={20} />
+                Cerrar <X size={16} />
               </button>
             </div>
 
-            <div className="modal-body">
+            <div className="modal-body" style={{ gap: "20px" }}>
               <div className="form-group">
-                <label htmlFor="eventType">Tipo de evento</label>
+                <label htmlFor="eventType">
+                  Tipo de evento<span className="required-asterisk">*</span>
+                </label>
                 <div className="select-wrapper">
                   <select
                     id="eventType"
                     className="form-select"
                     defaultValue="revelacion"
                   >
-                    <option value="" disabled>
-                      Cumpleaños
-                    </option>
-                    <option value="" disabled>
-                      Boda
-                    </option>
                     <option value="revelacion">
-                      Revelación del sexo del bebé
-                    </option>
-                    <option value="" disabled>
-                      Baby Shower
-                    </option>
-                    <option value="" disabled>
-                      Graduación
+                      Revelación del Sexo del Bebé
                     </option>
                   </select>
                 </div>
               </div>
 
-              <div className="info-box">
-                <Info size={18} className="info-icon" />
-                <p>
-                  Te enviaremos a una ventana en donde podrás completar tu{" "}
-                  <strong>invitación</strong> en{" "}
-                  <span className="highlight-steps">4 simples pasos</span>.
-                </p>
+              <div className="form-group">
+                <label>
+                  Fecha del evento<span className="required-asterisk">*</span>
+                </label>
+                <div className="input-with-icon right">
+                  <input
+                    type="date"
+                    className="modern-input"
+                    defaultValue="2026-04-17"
+                  />
+                  <Calendar size={18} className="input-icon" color="#e53935" />
+                </div>
               </div>
 
-              <div className="stars-decoration">
-                <Star size={16} className="star star-1" />
-                <Star size={12} className="star star-2" />
-                <Star size={20} className="star star-3" />
+              <div className="form-group">
+                <label>
+                  Hora del evento<span className="required-asterisk">*</span>
+                </label>
+                <div className="input-with-icon right">
+                  <input
+                    type="time"
+                    className="modern-input"
+                    defaultValue="17:30"
+                  />
+                  <Clock size={18} className="input-icon" color="#e53935" />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>
+                  Nombre de los padres
+                  <span className="required-asterisk">*</span>
+                </label>
+                <input
+                  type="text"
+                  className="modern-input"
+                  placeholder="Pepe y Norma"
+                  defaultValue="Pepe y Norma"
+                />
+              </div>
+
+              <div
+                className="info-box"
+                style={{
+                  background: "#f9f0ff",
+                  color: "#a32bce",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}
+              >
+                <Info size={20} color="#a32bce" style={{ flexShrink: 0 }} />
+                <p
+                  style={{ margin: 0, fontSize: "0.85rem", lineHeight: "1.4" }}
+                >
+                  Tu invitación web incluye: Confirmación de asistencia y Lista
+                  de regalos, listas para usar. Puedes editar o eliminar.
+                </p>
               </div>
             </div>
 
-            <div className="modal-footer">
+            <div
+              className="modal-footer"
+              style={{
+                borderTop: "none",
+                justifyContent: "flex-end",
+                paddingTop: "0",
+              }}
+            >
               <button
-                className="btn-primary full-width"
+                className="btn-primary"
+                style={{
+                  width: "auto",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
                 onClick={handleCreateEvent}
               >
-                Empezar
+                <Star size={18} /> Crear evento
               </button>
             </div>
           </div>
