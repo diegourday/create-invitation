@@ -698,6 +698,176 @@ function EventDetails() {
   );
 }
 
+interface ExtraInfoCard {
+  id: number;
+  title: string;
+  icon: string;
+  description: string;
+}
+
+function ExtraInformationSectionEditor() {
+  const [sectionTitle, setSectionTitle] = useState("Más información");
+  const [cards, setCards] = useState<ExtraInfoCard[]>([
+    { id: 1, title: 'Mesa de regalos', icon: 'gift', description: 'Liverpool: 12345' },
+    { id: 2, title: 'Hospedaje', icon: 'hotel', description: 'Hotel Fiesta Inn' }
+  ]);
+  
+  const [newTitle, setNewTitle] = useState("");
+  const [newIcon, setNewIcon] = useState("gift");
+  const [newDesc, setNewDesc] = useState("");
+
+  const handleAdd = () => {
+    if (!newTitle.trim()) return;
+    const newId = cards.length > 0 ? Math.max(...cards.map(c => c.id)) + 1 : 1;
+    setCards([...cards, { id: newId, title: newTitle, icon: newIcon, description: newDesc }]);
+    setNewTitle("");
+    setNewIcon("gift");
+    setNewDesc("");
+  };
+
+  const handleRemove = (id: number) => {
+    setCards(cards.filter((c) => c.id !== id));
+  };
+  
+  const moveCard = (id: number, direction: 'up' | 'down') => {
+    const index = cards.findIndex(c => c.id === id);
+    if (index < 0) return;
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === cards.length - 1) return;
+    
+    const newCards = [...cards];
+    const swapIndex = direction === 'up' ? index - 1 : index + 1;
+    [newCards[index], newCards[swapIndex]] = [newCards[swapIndex], newCards[index]];
+    setCards(newCards);
+  };
+
+  return (
+    <div className="extra-section fade-in">
+      <h2 className="section-title">Más información</h2>
+      
+      <div className="modern-form">
+        <div className="form-group">
+          <label>Título de la sección de información <span className="required">*</span></label>
+          <input
+            type="text"
+            className="modern-input"
+            value={sectionTitle}
+            onChange={(e) => setSectionTitle(e.target.value)}
+            placeholder="Ej. Información adicional"
+          />
+        </div>
+      </div>
+
+      <div className="itinerary-add-box">
+        <h3>Agregar tarjeta de información</h3>
+        <div className="itinerary-grid">
+          <div className="form-group">
+            <label>Título de tarjeta</label>
+            <input
+              type="text"
+              className="modern-input"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="Ej. Mesa de regalos"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label>Icono</label>
+            <div className="select-wrapper">
+              <select
+                className="form-select"
+                value={newIcon}
+                onChange={(e) => setNewIcon(e.target.value)}
+              >
+                <option value="gift">🎁 Regalo</option>
+                <option value="hotel">🏨 Hospedaje</option>
+                <option value="bus">🚌 Transporte</option>
+                <option value="dress">👗 C. de vestimenta</option>
+                <option value="music">🎵 Música</option>
+                <option value="info">ℹ️ Info</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="form-group" style={{ marginTop: '16px' }}>
+          <label>Descripción</label>
+          <textarea
+            className="modern-input"
+            value={newDesc}
+            onChange={(e) => setNewDesc(e.target.value)}
+            placeholder="Detalles sobre esta sección..."
+            rows={3}
+            style={{ resize: 'vertical' }}
+          />
+        </div>
+
+        <div className="itinerary-actions-center">
+          <button
+            type="button"
+            className="btn-primary itinerary-add-btn"
+            onClick={handleAdd}
+          >
+            Agregar
+          </button>
+        </div>
+        
+        <div className="itinerary-table-container">
+          <table className="itinerary-modern-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Icono</th>
+                <th>Orden</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cards.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="empty-table-cell">
+                    No hay registros
+                  </td>
+                </tr>
+              ) : (
+                cards.map((card, idx) => (
+                  <tr key={card.id}>
+                    <td>{card.title}</td>
+                    <td className="icon-cell">
+                      {card.icon === "gift" && "🎁"}
+                      {card.icon === "hotel" && "🏨"}
+                      {card.icon === "bus" && "🚌"}
+                      {card.icon === "dress" && "👗"}
+                      {card.icon === "music" && "🎵"}
+                      {card.icon === "info" && "ℹ️"}
+                    </td>
+                    <td className="action-cell">
+                      <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
+                         <button type="button" className="icon-btn" onClick={() => moveCard(card.id, 'up')} disabled={idx === 0}>⬆️</button>
+                         <button type="button" className="icon-btn" onClick={() => moveCard(card.id, 'down')} disabled={idx === cards.length - 1}>⬇️</button>
+                      </div>
+                    </td>
+                    <td className="action-cell">
+                      <button
+                        type="button"
+                        className="icon-btn danger"
+                        onClick={() => handleRemove(card.id)}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function EventEditor() {
   const { eventId } = useParams();
   const navigate = useNavigate();
