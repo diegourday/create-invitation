@@ -1930,3 +1930,157 @@ body {
   color: var(--text-gray);
   pointer-events: none;
 }
+
+/* Fixes for Crear mi evento modal */
+.modal-header {
+  justify-content: space-between !important;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-dark);
+}
+
+.info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f9f5ff; /* light purple/pink */
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.info-box p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  line-height: 1.5;
+}
+
+.info-box .info-icon {
+  color: var(--primary-purple);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.highlight-steps {
+  color: var(--primary-purple);
+  font-weight: 600;
+}
+
+.stars-decoration {
+  display: none; /* Can be enabled if absolutely needed, but usually redundant if it's not well positioned */
+}
+
+.full-width {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Select Element Styles for Modal (Tipo de evento) */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-wrapper::after {
+  content: '▼';
+  font-size: 0.8rem;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-gray);
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text-dark);
+  background-color: var(--white);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-select:hover {
+  border-color: #b0b0b0;
+}
+
+.form-select:focus {
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(110, 48, 204, 0.1);
+}
+
+.form-select option {
+  color: var(--text-dark);
+  padding: 8px;
+}
+
+.form-select option:disabled {
+  color: #a0a0a0;
+}
+
+/* Select Element Styles for Modal (Tipo de evento) */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-wrapper::after {
+  content: '▼';
+  font-size: 0.8rem;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-gray);
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text-dark);
+  background-color: var(--white);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-select:hover {
+  border-color: #b0b0b0;
+}
+
+.form-select:focus {
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(110, 48, 204, 0.1);
+}
+
+.form-select option {
+  color: var(--text-dark);
+  padding: 8px;
+}
+
+.form-select option:disabled {
+  color: #a0a0a0;
+}

@@ -863,20 +863,7 @@ function EventEditor() {
           {activeTab === "photos" && <PhotosSectionEditor />}
           {activeTab === "itinerary" && <ItinerarySectionEditor />}
 
-          {activeTab === "extra" && (
-            <div className="form-section fade-in">
-              <h2 className="section-title">
-                {TABS.find((t) => t.id === activeTab)?.label}
-              </h2>
-              <div className="modern-form">
-                <div className="map-placeholder">
-                  <p style={{ color: "var(--text-gray)" }}>
-                    Esta sección está en construcción. (Demo UI)
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+          {activeTab === "extra" && <ExtraInformationSectionEditor />}
         </section>
       </div>
     </div>
