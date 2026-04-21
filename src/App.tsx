@@ -22,13 +22,9 @@ import {
   Star,
   ArrowLeft,
   Copy,
-  Circle,
   Link,
-  CalendarPlus,
   Calendar,
   Users,
-  Send,
-  Gift,
   MapPin,
   Camera,
   List,
@@ -37,6 +33,8 @@ import {
   Clock,
   Map,
 } from "lucide-react";
+import { Joyride } from "react-joyride";
+import type { Step, EventData } from "react-joyride";
 import "./App.css";
 
 const EVENT_DATABASE = {
@@ -546,6 +544,32 @@ function ItinerarySectionEditor() {
 function EventDetails() {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  // Joyride state setup
+  const [runTour, setRunTour] = useState(true);
+  const steps: Step[] = [
+    {
+      target: ".hero-link-wrapper",
+      content: "Aquí encontrarás el link de tu invitación. Puedes copiarlo y compartirlo con tus invitados.",
+    },
+    {
+      target: ".tour-completa-datos",
+      content: "Ingresa aquí para completar o editar los datos de tu evento, como el lugar, horario e itinerario.",
+    },
+    {
+      target: ".tour-asistencia",
+      content: "Aquí podrás visualizar y gestionar las confirmaciones de asistencia de tus invitados.",
+    },
+    {
+      target: ".tour-dedicatorias",
+      content: "Revisa y administra los mensajes y dedicatorias especiales que te han enviado.",
+    },
+    {
+      target: ".tour-regalos",
+      content: "Organiza tu lista de regalos y sugerencias para tus invitados de forma sencilla.",
+    },
+  ];
 
   const event =
     EVENT_DATABASE[eventId as keyof typeof EVENT_DATABASE] ||
@@ -553,148 +577,220 @@ function EventDetails() {
 
   return (
     <div className="event-details-view">
+      <Joyride
+        steps={steps}
+        run={runTour}
+        continuous={true}
+        options={{
+          primaryColor: "var(--primary-purple, #6B4EE6)",
+          zIndex: 1000,
+          showProgress: true,
+          buttons: ['back', 'close', 'primary', 'skip'],
+          skipBeacon: true,
+        }}
+        locale={{
+          back: "Anterior",
+          close: "Cerrar",
+          last: "Finalizar",
+          next: "Siguiente",
+          nextWithProgress: "Siguiente ({current} de {total})",
+          skip: "Saltar tour",
+        }}
+        onEvent={(data: EventData) => {
+          const { status } = data;
+          if (["finished", "skipped"].includes(status)) {
+            setRunTour(false);
+          }
+        }}
+      />
       <button className="back-btn" onClick={() => navigate("/")}>
         <ArrowLeft size={16} /> Volver a mis eventos
       </button>
 
-      <div className="event-hero-banner" style={{ background: event.themeBg }}>
+      <div
+        className="event-hero-banner centered-banner"
+        style={{ background: event.themeBg }}
+      >
         <div className="hero-content">
           <h1 className="hero-title">{event.title}</h1>
-          <div className="hero-link-wrapper">
-            <span className="link-label">Link de invitación web:</span>
+          <span className="hero-date">{event.date}</span>
+
+          <div className="hero-link-wrapper hero-link-card">
+            <div className="hero-link-header">
+              <span className="link-label">Link de invitación web:</span>
+              <button
+                className="btn-info-share"
+                onClick={() => setIsShareModalOpen(true)}
+              >
+                <Info size={14} /> Cómo compartir la invitación
+              </button>
+            </div>
+
             <div className="hero-link">
               <div className="link-content">
-                <Link size={16} className="link-icon" />
+                <Link size={18} className="link-icon" />
                 <a
                   href={`https://rumba77.com/eventos/${event.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="link-url"
                 >
                   https://rumba77.com/eventos/{event.id}
                 </a>
               </div>
               <button
-                className="copy-btn"
+                className="copy-btn copy-btn-enhanced"
                 aria-label="Copiar link"
                 title="Copiar link"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `https://rumba77.com/eventos/${event.id}`,
+                  );
+                }}
               >
-                <Copy size={16} />
+                <Copy size={16} /> <span className="copy-text">Copiar</span>
               </button>
             </div>
           </div>
-          <span className="hero-date">{event.date}</span>
-        </div>
-        <div className="hero-illustration">
-          <img src={event.illustration} alt={event.title} />
         </div>
       </div>
 
-      <div className="checklist-container">
-        <div className="checklist-header">
-          <h2>Pasos para finalizar tu invitación</h2>
-          <p>Completa estos 4 pasos para que tu evento sea un éxito.</p>
+      {isShareModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content share-modal">
+            <div
+              className="modal-header"
+              style={{
+                alignItems: "flex-start",
+                paddingBottom: "16px",
+                borderBottom: "1px solid #ebebeb",
+                marginBottom: "16px",
+              }}
+            >
+              <div>
+                <h2
+                  style={{
+                    fontSize: "1.3rem",
+                    color: "var(--text-dark)",
+                    marginBottom: "4px",
+                  }}
+                >
+                  Cómo compartir la invitación
+                </h2>
+              </div>
+              <button
+                className="btn-outline"
+                style={{
+                  padding: "6px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "none",
+                  background: "transparent",
+                  color: "#666",
+                }}
+                onClick={() => setIsShareModalOpen(false)}
+                aria-label="Cerrar modal"
+              >
+                <X size={20} />
+              </button>
+            </div>
 
-          <div className="progress-bar-container">
-            <div className="progress-text">Progreso: 0 de 4 pasos</div>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: "0%" }} />
+            <div
+              className="modal-body"
+              style={{ color: "var(--text-gray)", lineHeight: "1.6" }}
+            >
+              <ol className="share-steps">
+                <li>
+                  <strong>Completa tu invitación:</strong> Asegúrate de haber
+                  llenado todos los datos, fechas e itinerarios correspondientes
+                  a tu evento.
+                </li>
+                <li>
+                  <strong>Copia el enlace:</strong> Usa el botón{" "}
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      background: "var(--primary-purple)",
+                      color: "white",
+                      padding: "2px 6px",
+                      borderRadius: "4px",
+                      fontSize: "0.8rem",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    <Copy size={12} /> Copiar
+                  </span>{" "}
+                  para obtener el enlace especial de tu invitación ya terminada.
+                </li>
+                <li>
+                  <strong>¡Compártelo!:</strong> Pega este enlace en tus grupos
+                  de WhatsApp, Facebook, o correo electrónico con tus invitados.
+                </li>
+              </ol>
             </div>
           </div>
         </div>
+      )}
 
-        <div className="steps-list">
-          <div className="step-item">
-            <div className="step-icon pending">
-              <Circle size={24} />
-            </div>
-            <div
-              className="step-image"
-              style={{ color: "var(--primary-purple)" }}
-            >
-              <CalendarPlus size={36} strokeWidth={1.5} />
-            </div>
-            <div className="step-content">
-              <h3>Ingresar los datos del evento</h3>
-              <p>
-                Fecha, hora, lugar del evento y si deseas que los invitados
-                lleven algún regalo.
-              </p>
-            </div>
-            <div className="step-action">
-              <button
-                className="btn-secondary"
-                onClick={() => navigate(`/mi-evento/${eventId}/editar`)}
-              >
-                Completar
-              </button>
-            </div>
-          </div>
+      <div className="main-menu-container">
+        <h2 className="main-menu-title">Menú Principal</h2>
 
-          <div className="step-item">
-            <div className="step-icon pending">
-              <Circle size={24} />
-            </div>
-            <div
-              className="step-image"
-              style={{ color: "var(--primary-purple)" }}
+        <div className="main-menu-grid">
+          <article className="menu-card tour-completa-datos">
+            <h3 className="menu-card-title">Completa datos de tu invitación</h3>
+            <img
+              src="https://rumba77.com/img/png/event-menu/edit_1.svg"
+              alt="Completa datos"
+              className="menu-card-img"
+            />
+            <button
+              className="menu-card-btn"
+              onClick={() => navigate(`/mi-evento/${eventId}/editar`)}
             >
-              <Users size={36} strokeWidth={1.5} />
-            </div>
-            <div className="step-content">
-              <h3>Ingresar invitados</h3>
-              <p>
-                Sube tu lista de invitados en formato excel o ingresa uno por
-                uno de forma manual.
-              </p>
-            </div>
-            <div className="step-action">
-              <button className="btn-secondary">Completar</button>
-            </div>
-          </div>
+              Ver más <ChevronRight size={18} />
+            </button>
+          </article>
 
-          <div className="step-item">
-            <div className="step-icon pending">
-              <Circle size={24} />
-            </div>
-            <div
-              className="step-image"
-              style={{ color: "var(--primary-purple)" }}
-            >
-              <Send size={36} strokeWidth={1.5} />
-            </div>
-            <div className="step-content">
-              <h3>Mandar las invitaciones</h3>
-              <p>
-                Te daremos dos opciones, mandarlas por ti o nosotros por nuestro
-                sistema.
-              </p>
-            </div>
-            <div className="step-action">
-              <button className="btn-secondary">Completar</button>
-            </div>
-          </div>
+          <article className="menu-card tour-asistencia">
+            <h3 className="menu-card-title">
+              Gestiona tu confirmación de asistencia
+            </h3>
+            <img
+              src="https://rumba77.com/img/png/event-menu/attendance_2.svg"
+              alt="Confirmación de asistencia"
+              className="menu-card-img"
+            />
+            <button className="menu-card-btn">
+              Ver más <ChevronRight size={18} />
+            </button>
+          </article>
 
-          <div className="step-item">
-            <div className="step-icon pending">
-              <Circle size={24} />
-            </div>
-            <div
-              className="step-image"
-              style={{ color: "var(--primary-purple)" }}
-            >
-              <Gift size={36} strokeWidth={1.5} />
-            </div>
-            <div className="step-content">
-              <h3>Sugerencias de obsequios</h3>
-              <p>
-                Pide a tus invitados qué deseas y donde lo has visualizado tal
-                compra.
-              </p>
-            </div>
-            <div className="step-action">
-              <button className="btn-secondary">Completar</button>
-            </div>
-          </div>
+          <article className="menu-card tour-dedicatorias">
+            <h3 className="menu-card-title">Gestiona tus dedicatorias</h3>
+            <img
+              src="https://rumba77.com/img/png/event-menu/letter_1.svg"
+              alt="Dedicatorias"
+              className="menu-card-img"
+            />
+            <button className="menu-card-btn">
+              Ver más <ChevronRight size={18} />
+            </button>
+          </article>
+
+          <article className="menu-card tour-regalos">
+            <h3 className="menu-card-title">Gestiona tu lista de regalos</h3>
+            <img
+              src="https://rumba77.com/img/png/event-menu/gift-boxes_1.svg"
+              alt="Lista de regalos"
+              className="menu-card-img"
+            />
+            <button className="menu-card-btn">
+              Ver más <ChevronRight size={18} />
+            </button>
+          </article>
         </div>
       </div>
     </div>
@@ -916,6 +1012,8 @@ function EventEditor() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("general");
 
+  const [runTour, setRunTour] = useState(true);
+
   const event =
     EVENT_DATABASE[eventId as keyof typeof EVENT_DATABASE] ||
     EVENT_DATABASE["20260417999"];
@@ -929,8 +1027,80 @@ function EventEditor() {
     { id: "extra", label: "Más información", icon: List },
   ] as const;
 
+  const steps: Step[] = [
+    {
+      target: ".tour-general",
+      content: "Aquí puedes editar los datos principales de tu invitación, como el título y la descripción, que verán tus invitados al ingresar.",
+      placement: "bottom",
+    },
+    {
+      target: ".tour-location",
+      content: "Ingresa la fecha y especifica el lugar exacto de tu evento para que todos sepan cuándo y dónde asistir.",
+      placement: "bottom",
+    },
+    {
+      target: ".tour-people",
+      content: "Registra los nombres de los padres y/o padrinos si prefieres que se muestren de forma destacada.",
+      placement: "bottom",
+    },
+    {
+      target: ".tour-photos",
+      content: "Sube las fotos que quieras compartir en la galería y visualízalas aquí.",
+      placement: "bottom",
+    },
+    {
+      target: ".tour-itinerary",
+      content: "Crea el cronograma para que tus invitados conozcan cómo estarán organizadas las actividades en tu evento.",
+      placement: "bottom",
+    },
+    {
+      target: ".tour-extra",
+      content: "Añade notas adicionales que puedan ser de utilidad y la lista de sugerencias o regalos.",
+      placement: "bottom",
+    },
+  ];
+
+  // For horizontal scroll support on steps
+  const handleJoyrideCallback = (data: EventData) => {
+    const { status, type, step } = data;
+    
+    // Automatically switch tabs and scroll them into view
+    if (type === 'step:before' && step.target) {
+      const targetElement = document.querySelector(step.target as string);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    if (["finished", "skipped"].includes(status)) {
+      setRunTour(false);
+    }
+  };
+
   return (
     <div className="editor-layout">
+      <Joyride
+        steps={steps}
+        run={runTour}
+        continuous={true}
+        options={{
+          primaryColor: "var(--primary-purple, #6B4EE6)",
+          zIndex: 1000,
+          showProgress: true,
+          buttons: ['back', 'close', 'primary', 'skip'],
+          skipBeacon: true,
+          overlayColor: "rgba(0, 0, 0, 0.5)",
+        }}
+        locale={{
+          back: "Anterior",
+          close: "Cerrar",
+          last: "Finalizar",
+          next: "Siguiente",
+          nextWithProgress: "Siguiente ({current} de {total})",
+          skip: "Saltar tour",
+        }}
+        onEvent={handleJoyrideCallback}
+      />
       <button
         className="back-btn"
         onClick={() => navigate(`/mi-evento/${eventId}`)}
@@ -956,7 +1126,7 @@ function EventEditor() {
             {TABS.map((tab) => (
               <button
                 key={tab.id}
-                className={`tab-btn ${activeTab === tab.id ? "active" : ""}`}
+                className={`tab-btn ${activeTab === tab.id ? "active" : ""} tour-${tab.id}`}
                 onClick={() => setActiveTab(tab.id)}
               >
                 <tab.icon size={20} />
@@ -1136,7 +1306,7 @@ function Dashboard({
             <div className="event-info">
               <h2 className="event-title">Baby shower de Rosa</h2>
               <div className="event-meta">
-                <span className="event-date">2026-04-18</span>
+                <span className="event-date">18/04/2026</span>
                 <button className="edit-floater" aria-label="Editar evento">
                   <Edit2 size={16} color="#FF8C8C" />
                 </button>
@@ -1179,7 +1349,7 @@ function Dashboard({
                 Revelación del sexo del bebé de Ernesto Dominguez
               </h2>
               <div className="event-meta">
-                <span className="event-date">2025-07-05</span>
+                <span className="event-date">05/07/2025</span>
                 <button className="edit-floater" aria-label="Editar evento">
                   <Edit2 size={16} color="#6081E6" />
                 </button>
