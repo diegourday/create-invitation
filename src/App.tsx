@@ -71,6 +71,43 @@ const PEOPLE_SECTION_CONFIG = {
   godparents: { label: "Padrinos" },
 } as const;
 
+type DashboardEventCard = {
+  id: string;
+  title: string;
+  date: string;
+  eventPath: string;
+  themeBg: string;
+  topBg: string;
+  illustration: string;
+  illustrationAlt: string;
+  editColor: string;
+};
+
+const INITIAL_DASHBOARD_EVENTS: DashboardEventCard[] = [
+  {
+    id: "20260425603",
+    title: "Baby shower de Rosa",
+    date: "18/04/2026",
+    eventPath: "/mi-evento/20260425603",
+    themeBg: "#FF8C8C",
+    topBg: "#FFE2E2",
+    illustration: "https://rumba77.com/illustrations/baby-shower-mujer.svg",
+    illustrationAlt: "Baby shower de mujer",
+    editColor: "#FF8C8C",
+  },
+  {
+    id: "20250705123",
+    title: "Revelación del sexo del bebé de Ernesto Dominguez",
+    date: "05/07/2025",
+    eventPath: "/mi-evento/20250705123",
+    themeBg: "var(--card-blue)",
+    topBg: "#E9EAFF",
+    illustration: "https://rumba77.com/illustrations/revelacion-sexo.svg",
+    illustrationAlt: "Revelación de sexo",
+    editColor: "#6081E6",
+  },
+];
+
 function PeopleSectionEditor() {
   const [peopleType, setPeopleType] = useState<PeopleSectionType>("parents");
   const [includeParents, setIncludeParents] = useState(true);
@@ -551,7 +588,8 @@ function EventDetails() {
   const steps: Step[] = [
     {
       target: ".hero-link-wrapper",
-      content: "Aquí encontrarás el link de tu invitación. Puedes copiarlo y compartirlo con tus invitados.",
+      content:
+        "Aquí puedes ir viendo los cambios de tu invitación y compartirla con tus invitados.",
     },
     {
       target: ".tour-completa-datos",
@@ -575,6 +613,21 @@ function EventDetails() {
     EVENT_DATABASE[eventId as keyof typeof EVENT_DATABASE] ||
     EVENT_DATABASE["20260417999"];
 
+  const handleJoyrideCallback = (data: EventData) => {
+    const { status, type, step } = data;
+
+    if (type === "step:before" && step.target) {
+      const targetElement = document.querySelector(step.target as string);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    if (["finished", "skipped"].includes(status)) {
+      setRunTour(false);
+    }
+  };
+
   return (
     <div className="event-details-view">
       <Joyride
@@ -596,25 +649,22 @@ function EventDetails() {
           nextWithProgress: "Siguiente ({current} de {total})",
           skip: "Saltar tour",
         }}
-        onEvent={(data: EventData) => {
-          const { status } = data;
-          if (["finished", "skipped"].includes(status)) {
-            setRunTour(false);
-          }
-        }}
+        onEvent={handleJoyrideCallback}
       />
       <button className="back-btn" onClick={() => navigate("/")}>
         <ArrowLeft size={16} /> Volver a mis eventos
       </button>
+
+      <div className="event-hero-header">
+        <h1 className="hero-title">{event.title}</h1>
+        <span className="hero-date">{event.date}</span>
+      </div>
 
       <div
         className="event-hero-banner centered-banner"
         style={{ background: event.themeBg }}
       >
         <div className="hero-content">
-          <h1 className="hero-title">{event.title}</h1>
-          <span className="hero-date">{event.date}</span>
-
           <div className="hero-link-wrapper hero-link-card">
             <div className="hero-link-header">
               <span className="link-label">Link de invitación web:</span>
@@ -1259,6 +1309,11 @@ function Dashboard({
   setIsModalOpen: (val: boolean) => void;
 }) {
   const navigate = useNavigate();
+  const [events, setEvents] = useState(INITIAL_DASHBOARD_EVENTS);
+
+  const handleDeleteEvent = (eventId: string) => {
+    setEvents((current) => current.filter((event) => event.id !== eventId));
+  };
 
   return (
     <>
@@ -1273,97 +1328,78 @@ function Dashboard({
       </header>
 
       <div className="cards-grid">
-        <article
-          className="event-card"
-          style={
-            {
-              "--card-bg": "#FF8C8C",
-              "--card-top-bg": "#FFE2E2",
-            } as React.CSSProperties
-          }
-        >
-          <div className="event-card-top">
-            <img
-              src="https://rumba77.com/illustrations/baby-shower-mujer.svg"
-              alt="Baby shower de mujer"
-              className="event-illustration"
-            />
-          </div>
-
-          <div className="event-card-bottom">
-            <div className="event-actions">
-              <span className="badge">En revisión (?)</span>
-              <div className="action-buttons">
-                <button className="icon-btn" aria-label="Agregar invitados">
-                  <UserPlus size={16} />
-                </button>
-                <button className="icon-btn" aria-label="Eliminar evento">
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-
-            <div className="event-info">
-              <h2 className="event-title">Baby shower de Rosa</h2>
-              <div className="event-meta">
-                <span className="event-date">18/04/2026</span>
-                <button className="edit-floater" aria-label="Editar evento">
-                  <Edit2 size={16} color="#FF8C8C" />
-                </button>
-              </div>
-            </div>
-
-            <button
-              className="primary-action-btn"
-              onClick={() => navigate("/mi-evento/20260425603")}
+        {events.length > 0 ? (
+          events.map((event) => (
+            <article
+              key={event.id}
+              className="event-card"
+              style={
+                {
+                  "--card-bg": event.themeBg,
+                  "--card-top-bg": event.topBg,
+                } as React.CSSProperties
+              }
             >
-              Ver más <ChevronRight size={18} />
-            </button>
-          </div>
-        </article>
+              <div className="event-card-top">
+                <img
+                  src={event.illustration}
+                  alt={event.illustrationAlt}
+                  className="event-illustration"
+                />
+              </div>
 
-        <article className="event-card">
-          <div className="event-card-top">
-            <img
-              src="https://rumba77.com/illustrations/revelacion-sexo.svg"
-              alt="Revelación de sexo"
-              className="event-illustration"
-            />
-          </div>
+              <div className="event-card-bottom">
+                <div className="event-actions">
+                  <span className="badge">En revisión (?)</span>
+                  <div className="action-buttons">
+                    <button className="icon-btn" aria-label="Agregar invitados">
+                      <UserPlus size={16} />
+                    </button>
+                    <button
+                      className="icon-btn"
+                      aria-label="Eliminar evento"
+                      onClick={() => handleDeleteEvent(event.id)}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
 
-          <div className="event-card-bottom">
-            <div className="event-actions">
-              <span className="badge">En revisión (?)</span>
-              <div className="action-buttons">
-                <button className="icon-btn" aria-label="Agregar invitados">
-                  <UserPlus size={16} />
-                </button>
-                <button className="icon-btn" aria-label="Eliminar evento">
-                  <Trash2 size={16} />
+                <div className="event-info">
+                  <h2 className="event-title">{event.title}</h2>
+                  <div className="event-meta">
+                    <span className="event-date">{event.date}</span>
+                    <button className="edit-floater" aria-label="Editar evento">
+                      <Edit2 size={16} color={event.editColor} />
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  className="primary-action-btn"
+                  onClick={() => navigate(event.eventPath)}
+                >
+                  Ver más <ChevronRight size={18} />
                 </button>
               </div>
+            </article>
+          ))
+        ) : (
+          <button
+            type="button"
+            className="event-empty-card"
+            onClick={() => setIsModalOpen(true)}
+            aria-label="Crear evento"
+          >
+            <div className="event-empty-icon">
+              <Plus size={28} />
             </div>
-
-            <div className="event-info">
-              <h2 className="event-title">
-                Revelación del sexo del bebé de Ernesto Dominguez
-              </h2>
-              <div className="event-meta">
-                <span className="event-date">05/07/2025</span>
-                <button className="edit-floater" aria-label="Editar evento">
-                  <Edit2 size={16} color="#6081E6" />
-                </button>
-              </div>
-            </div>
-
-            <button
-              className="primary-action-btn"
-              onClick={() => navigate("/mi-evento/20250705123")}
-            >
-              Ver más <ChevronRight size={18} />
-            </button>
-          </div>
-        </article>
+            <h2 className="event-empty-title">Crear evento</h2>
+            <p className="event-empty-text">
+              Invitación web, lista de regalos y confirmación de asistencia.
+            </p>
+          </button>
+        )}
       </div>
     </>
   );
